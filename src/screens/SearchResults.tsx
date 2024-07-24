@@ -5,9 +5,49 @@ import PokemonTile from '../components/PokemonTile';
 import { Pokemon, PokemonPages } from '../interfaces/pokemon_interface';
 import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faAngleLeft, faAngleRight, faAnglesLeft, faAnglesRight } from '@fortawesome/free-solid-svg-icons';
+import {
+  faAngleLeft,
+  faAngleRight,
+  faAnglesLeft,
+  faAnglesRight,
+} from '@fortawesome/free-solid-svg-icons';
 import SearchBar from '../components/SearchBar';
 import PokemonList from '../components/PokemonList';
+
+const SearchResults = () => {
+  return (
+    <Layout>
+      <SearchBar />
+      <PokemonList count={0} next={null} previous={null} results={[]} />
+      <div>
+        <img src="src/assets/ditto.png" width="200" height="200" />
+        <h3>
+          Sorry, we couldn't find that Pokémon. Please check if you typed the
+          name or id correctly.
+        </h3>
+      </div>
+    </Layout>
+  );
+};
+
+const Layout = styled.div`
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 2rem;
+
+  > h1 {
+    font-size: 2rem;
+    color: black;
+    display: flex;
+
+    @media (max-width: 768px) {
+      font-size: 2rem;
+      width: 90vw;
+    }
+  }
+`;
+
+export default SearchResults;
 
 const Pokedex = () => {
   const navigate = useNavigate();
@@ -37,30 +77,36 @@ const Pokedex = () => {
   return (
     <Layout>
       <h1>Pokédex</h1>
-      <SearchBar/>
-      <PokemonList count={totalPokemon || 0} next={null} previous={null} results={pokemon}/>
+      <SearchBar />
+      <PokemonGrid>
+        {pokemon.length > 0
+          ? pokemon.map((i) => {
+              return <PokemonTile key={i.name} name={i.name} />;
+            })
+          : null}
+      </PokemonGrid>
       <ButtonContainer>
         <StyledButton onClick={() => changePageTo(1)} disabled={currPage === 1}>
-        <FontAwesomeIcon icon={faAnglesLeft} color='grey' />
+          <FontAwesomeIcon icon={faAnglesLeft} color="grey" />
         </StyledButton>
         <StyledButton
           onClick={() => changePageTo(currPage - 1)}
           disabled={currPage === 1}
         >
-          <FontAwesomeIcon icon={faAngleLeft} color='grey'/>
+          <FontAwesomeIcon icon={faAngleLeft} color="grey" />
         </StyledButton>
         <PageNumber>{currPage}</PageNumber>
         <StyledButton
           onClick={() => changePageTo(currPage + 1)}
           disabled={currPage === pages}
         >
-          <FontAwesomeIcon icon={faAngleRight} color='grey'/>
+          <FontAwesomeIcon icon={faAngleRight} color="grey" />
         </StyledButton>
         <StyledButton
           onClick={() => changePageTo(pages)}
           disabled={currPage === pages}
         >
-          <FontAwesomeIcon icon={faAnglesRight} color='grey' />
+          <FontAwesomeIcon icon={faAnglesRight} color="grey" />
         </StyledButton>
       </ButtonContainer>
     </Layout>
@@ -81,6 +127,21 @@ const Layout = styled.div`
       font-size: 2rem;
       width: 90vw;
     }
+  }
+`;
+
+const PokemonGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-gap: 2rem;
+  margin-top: 2rem;
+
+  @media (max-width: 1024px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(2, 1fr);
   }
 `;
 
@@ -126,5 +187,3 @@ const PageNumber = styled.span`
   padding: 8px 16px;
   border-radius: 12px;
 `;
-
-export default Pokedex;

@@ -1,25 +1,33 @@
-import { Grid } from '@mui/material';
-import { IPokemon } from '../interfaces/pokemon_interface';
-import PokemonTile from './PokemonTile';
+import styled from "styled-components";
+import { PokemonPages } from "../interfaces/pokemon_interface";
+import PokemonTile from "./PokemonTile";
+const PokemonList = ({ results }: PokemonPages) => {
 
-interface PokemonListProps {
-  pokemon: IPokemon[];
+    return (
+    <PokemonGrid>
+        {results.length > 0
+          ? results.map((i) => {
+              return <PokemonTile key={i.name} name={i.name} />;
+            })
+          : null}
+      </PokemonGrid>    
+    );
 }
 
-const PokemonList = ({ pokemon }: PokemonListProps) => {
-  return (
-    <Grid container spacing={5}>
-      {pokemon.length > 0
-        ? pokemon.map((p) => {
-            return (
-                <Grid item xs={3}>
-                    <PokemonTile key={p.name} pokemon={p}/>
-                </Grid>
-            );
-          })
-        : null}
-    </ Grid>
-  );
-};
+const PokemonGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-gap: 2rem;
+  margin-top: 2rem;
+
+  @media (max-width: 1024px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+`;
+
 
 export default PokemonList;

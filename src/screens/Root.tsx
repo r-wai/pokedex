@@ -1,16 +1,10 @@
-import React from 'react';
-import { Outlet, Link} from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
 import styled from 'styled-components';
 
 const Root = () => {
   return (
     <Layout>
-      <NavigationBar>
-        <Title>Pokedex API</Title>
-        <Link to='/pokedex'>Pokedex</Link>
-        <Link to='/team-builder'>Team Builder</Link>
-        </NavigationBar>
-      <Outlet />
+      <Outlet/>
     </Layout>
   );
 };
@@ -18,18 +12,20 @@ const Root = () => {
 const Layout = styled.div`
   display: flex;
   flex-direction: column;
-`;
+  align-items: center;
+  padding-bottom: 3rem;
 
-const NavigationBar = styled.div`
-  background-color: aliceblue;
-`;
+  > h1 {
+    font-size: 3rem;
+    color: #000000;
+    display: flex;
+    justify-content: center;
 
-const Title = styled.h1`
-font-family: 'PokemonSolid';
-font-weight: normal;
-font-size: 40px;
-color: #ffcb05;
--webkit-text-stroke: 1px #2a75bb;
+    @media (max-width: 768px) {
+      font-size: 2rem;
+      width: 90vw;
+    }
+  }
 `;
 
 export default Root;
