@@ -1,27 +1,11 @@
-export interface Pokemon {
+export interface Result {
   name: string;
   url: string;
 }
 
-export interface Stat {
-  base_stat: number;
-  effort: number;
-  stat: {
-    name: string;
-  };
-}
-
-export interface Type {
-  type: {
-    name: string;
-  };
-}
-
-export interface PokedexEntry {
+export interface PokeListTile {
   id: number;
   name: string;
-  height: number;
-  weight: number;
   sprites: {
     other: {
       'official-artwork': {
@@ -29,17 +13,42 @@ export interface PokedexEntry {
       };
     };
   };
-  stats: Stat[];
-  types: Type[];
 }
 
 export interface PokemonProps {
   name: string | undefined;
 }
 
+export interface PokedexEntry {
+  id: number;
+  name: string;
+  weight: number;
+  height: number;
+  types: string[];
+  evolutions: number[];
+  description: string;
+  images: {
+    full: string;
+    sprite_front: string;
+  };
+}
+
 export interface PokemonPages {
   count: number;
   next: string | null;
   previous: string | null;
-  results: Pokemon[];
+  results: Result[];
+}
+
+export interface PokemonSearch {
+  total: number;
+  results: PokedexEntry[];
+}
+export interface TypeResult {
+  pokemon: Result;
+  slot: number;
+}
+
+export interface PokemonByType {
+  pokemon: TypeResult[];
 }

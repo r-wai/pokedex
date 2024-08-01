@@ -1,11 +1,15 @@
 import { Outlet } from 'react-router-dom';
 import styled from 'styled-components';
+import NavigationBar from '../components/NavigationBar';
 
 const Root = () => {
   return (
-    <Layout>
-      <Outlet/>
-    </Layout>
+    <>
+      <NavigationBar />
+      <Layout>
+        <Outlet/>
+      </Layout>
+    </>
   );
 };
 

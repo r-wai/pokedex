@@ -1,172 +1,111 @@
-// import React, { useState, useEffect } from "react";
-// import { client } from "../api/httpClient";
-// import styled from "styled-components";
-// import { PokedexEntry, PokemonProps } from "../interfaces/pokemon_interface";
+import { Modal, Container, Row, Col, Button } from 'react-bootstrap';
+import {
+  PokedexEntry,
+  PokemonProps,
+  PokemonSearch,
+} from '../interfaces/pokemon_interface';
+import { useState, useEffect } from 'react';
+import styled from 'styled-components';
+import { client, POKEMON_IMAGE_URL, POKEMON_SEARCH_URL, POKEMON_SPRITE_URL } from '../api/httpClient';
 
-// // eslint-disable-next-line @typescript-eslint/no-explicit-any
-// const iterate = (array: any[], key: string) => {
-//   const newArray = array.map((item, index) => {
-//     if (index + 1 === array.length) {
-//       return item[key].name;
-//     }
-//     return item[key].name + ", ";
-//   });
-//   return newArray;
-// };
+const PokemonProfile = ({ name: url }: PokemonProps) => {
+  const [pokemon, setPokemon] = useState<PokedexEntry | null>(null);
 
-// const PokemonProfile = ({ name }: PokemonProps) => {
-//   const [pokemons, setPokemons] = useState<PokedexEntry | null>();
+  useEffect(() => {
+    client
+      .get<PokemonSearch>(`${POKEMON_SEARCH_URL}q=${url}`)
+      .then((response) => {
+        setPokemon(response.data.results[0]);
+      });
+  }, [url]);
 
-//   useEffect(() => {
+  const pokeID = String(pokemon?.id).padStart(4, '0');
 
-//     client.get<PokedexEntry>(name).then(async (response) => {
-//       setPokemons(response.data);
-//     });
-//   }, []);
+  const pokeTypes = pokemon?.types.map((type) => {
+    return type + '\n';
+  });
 
-//   return (
-//     <>
-//       {pokemons && (
-//         <Card>
-//           <CharacterContainer>
-//             <Image
-//               src={pokemons.sprites.other["official-artwork"].front_default}
-//               alt={pokemons.name + "image"}
-//             />
-//             <p>
-//               {pokemons.name} #{pokemons.id}
-//             </p>
-//           </CharacterContainer>
+  const handleClick = (event: React.FormEvent) => {
+    event.preventDefault();
+  }
 
-//           <TexContainer>
-//             <Text>Weigth: {pokemons.weight} lbs</Text>
-//             <Text>Heigth: {pokemons.height} ft</Text>
-//             <Text>Types: {iterate(pokemons.types, "type")}</Text>
-//           </TexContainer>
+  return (
+    <>
+      <Modal.Header closeButton>
+        <Modal.Title>
+          <Name>
+            <strong>
+              <img src={`${POKEMON_SPRITE_URL}${url}.png`} width={75} height={75} />
+              {pokemon?.name + ' '}
+            </strong>
 
-//           {/* <StatsContainer>
-//             <h3>Stats</h3>
-//             <br />
-//             {pokemons?.stats.map((stat) => (
-//               <Stat percentage={stat.base_stat ?? 0} key={stat.stat.name}>
-//                 <p>
-//                   {stat.stat.name} - {stat.base_stat}
-//                 </p>
-//                 <div className="progress">
-//                   <div className="bar" />
-//                 </div>
-//               </Stat>
-//             ))}
-//           </StatsContainer> */}
-//         </Card>
-//       )}
-//     </>
-//   );
-// };
+            <text>#{pokeID}</text>
+          </Name>
+        </Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <Container>
+          <Row>
+            <Col xs={6} md={4}>
+              <img src={`${POKEMON_IMAGE_URL}${url}.png`} width={250} height={250} />
+            </Col>
+            <Col xs={12} md={8}>
+              <Description>
+                <h5>Description</h5>
+                <p>{pokemon?.description}</p>
+                <Row>
+                  <Col xs={4} md={3}>
+                    <h6>Height</h6>
+                    <p>{pokemon?.height}m</p>
+                  </Col>
+                  <Col xs={4} md={3}>
+                    <h6>Weight</h6>
+                    <p>{pokemon?.weight}kg</p>
+                  </Col>
+                  <Col xs={4} md={3}>
+                    <h6>Type</h6>
+                    <Types>
+                      {(pokeTypes?.length || 0) > 0
+                        ? pokeTypes?.map((i) => {
+                            return <img src={'src/assets/' + i + '.png'} />;
+                          })
+                        : null}
+                    </Types>
+                  </Col>
+                </Row>
+              </Description>
+            </Col>
 
-// const Card = styled.div`
-//   width: 35vw;
-//   color: #fff;
-//   background-color: #333333;
-//   border-radius: 12px;
-//   padding: 16px;
-//   box-shadow: 0 0 20px rgba(0, 0, 0, 0.05), 0 0px 40px rgba(0, 0, 0, 0.08);
-//   text-transform: capitalize;
-//   margin-top: 20px;
-//   margin-bottom: 3rem;
+            <Button variant="secondary" onClick={handleClick}>Add to team</Button>
+          </Row>
+        </Container>
+      </Modal.Body>
+    </>
+  );
+};
 
-//   @media (max-width: 1024px) {
-//     width: 50vw;
-//   }
-//   @media (max-width: 768px) {
-//     width: 90vw;
-//   }
-// `;
+const Name = styled.div`
+  text-transform: capitalize;
+  margin: -0.5rem;
+  > text {
+    color: #7b7b7b;
+    font-size: medium;
+    font-style: italic;
+  }
+`;
 
-// const CharacterContainer = styled.div`
-//   text-align: center;
-//   margin-bottom: 8px;
-//   padding: 10px;
-//   > p {
-//     font-size: 2rem;
-//     font-weight: bold;
-//   }
-// `;
+const Description = styled.div`
+  > h6 {
+    text-align: left;
+  }
+`;
 
-// const Image = styled.img`
-//   width: 200px;
+const Types = styled.div`
+  > img {
+    padding-right: 5%;
+    width: auto;
+    height: 18px;
+  }
+`;
 
-//   &:hover {
-//     animation: bounce 1.5s ease-out infinite;
-//     cursor: pointer;
-//   }
-
-//   @keyframes bounce {
-//     0% {
-//       transform: translateY(0px);
-//     }
-//     25% {
-//       transform: translateY(-10px);
-//     }
-//     50% {
-//       transform: translateY(0px);
-//     }
-//     75% {
-//       transform: translateY(-10px);
-//     }
-//     100% {
-//       transform: translateY(0);
-//     }
-//   }
-// `;
-
-// const TexContainer = styled.div`
-//   padding: 12px;
-// `;
-
-// const Text = styled.div`
-//   margin: 0 0 15px 0;
-//   font-size: 1.6rem;
-//   font-weight: bold;
-// `;
-
-// // const StatsContainer = styled.div`
-// //   padding: 10px;
-// // `;
-
-// // const Stat = styled.div<Precentage>`
-// //   margin-bottom: 12px;
-// //   display: flex;
-// //   align-items: center;
-// //   justify-content: space-between;
-// //   white-space: nowrap;
-// //   overflow: hidden;
-
-// //   p {
-// //     color: #fff;
-// //     font-size: 1.6rem;
-// //     font-weight: bold;
-// //     width: 100%;
-// //   }
-
-// //   .progress {
-// //     background: rgba(196, 196, 196, 0.3);
-// //     width: 100%;
-// //     height: 20px;
-// //     border-radius: 12px;
-// //     .bar {
-// //       width: ${(props) => `${props.percentage}%`};
-// //       height: 100%;
-// //       border-radius: 24px;
-// //       background: #e25e5e;
-// //       background: ${(props) =>
-// //         props.percentage && props.percentage >= 40 ? "#E2B55E" : ""};
-// //       background: ${(props) =>
-// //         props.percentage && props.percentage >= 50 ? "#D8E25E" : ""};
-// //       background: ${(props) =>
-// //         props.percentage && props.percentage >= 70 ? "#A0E25E" : ""};
-// //     }
-// //   }
-// // `;
-
-// export default PokemonProfile;
+export default PokemonProfile;

@@ -7,17 +7,16 @@ const NavigationBar = () => {
       <Navbar sticky="top">
         <Container fluid>
           <Navbar.Brand href="/">
-            <Logo src="src/assets/pokeball.png" width="50" height="50" />
+            <img src="src/assets/pokeball.png" width="50" height="50" />
           </Navbar.Brand>
           <Navbar.Toggle />
           <Navbar.Collapse className="justify-content-end">
             <Nav
               variant="underline"
-              defaultActiveKey="/pokedex"
               activeKey={location.pathname}
             >
               <Nav.Item>
-                <Nav.Link href="/pokedex">
+                <Nav.Link href="/">
                   <NavTab>Pokédex</NavTab>
                 </Nav.Link>
               </Nav.Item>
@@ -35,9 +34,7 @@ const NavigationBar = () => {
 };
 
 const NavTab = styled.h4`
-  color: #696969;
-`;
-const Logo = styled.img`
+  color: #000000;
 `;
 
 export default NavigationBar;
